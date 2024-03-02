@@ -1,31 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
+import axios from 'axios';
+import { useTournament } from './TournamentContext'; 
 
 
 const RankingGraphs = ({ rodada }) => { // Agora aceitamos 'rodada' como prop
   const [dados, setDados] = useState({});
+  const { tournament } = useTournament();
 
   useEffect(() => {
-    const apiUrl = `http://127.0.0.1:5000/pontuacoes/rodada/${rodada}`; // Utilizamos 'rodada' na URL da API
-    const fetchData = async () => {
-      try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) throw new Error('Network response was not ok');
-
-        const data = await response.json();
-        setDados({
-          labels: data.map(item => item.username),
-          pontosGanhos: data.map(item => item.pontos_ganhos),
-          pontosPossiveis: data.map(item => item.pontos_possiveis),
-        });
-      } catch (error) {
-        console.error("Erro ao buscar dados da API:", error);
+    const fetchTournamentScores = async () => {
+      if (tournament.short_name && tournament.year) {
+        try {
+          const apiUrl = `http://127.0.0.1:5000/pontuacoes/${tournament.short_name}/${tournament.year}/${rodada}`;
+          const response = await axios.get(apiUrl);
+          // Utilizando setDados conforme especificado, mantendo a estrutura dos dados para o gráfico
+          setDados({
+            labels: response.data.map(item => item.username),
+            pontosGanhos: response.data.map(item => item.pontos_ganhos),
+            pontosPossiveis: response.data.map(item => item.pontos_possiveis),
+          });
+        } catch (error) {
+          console.error('Erro ao buscar dados da API:', error);
+        }
+      } else {
+        console.log("Informações do torneio não disponíveis para buscar pontuações.");
       }
     };
 
-    fetchData();
-  }, [rodada]); // Dependência do useEffect agora inclui 'rodada'
+    fetchTournamentScores();
+  }, [tournament, rodada]);  
+  // useEffect(() => {
+  //   const apiUrl = `http://127.0.0.1:5000/pontuacoes/rodada/${rodada}`; 
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch(apiUrl);
+  //       if (!response.ok) throw new Error('Network response was not ok');
+
+  //       const data = await response.json();
+  //       setDados({
+  //         labels: data.map(item => item.username),
+  //         pontosGanhos: data.map(item => item.pontos_ganhos),
+  //         pontosPossiveis: data.map(item => item.pontos_possiveis),
+  //       });
+  //     } catch (error) {
+  //       console.error("Erro ao buscar dados da API:", error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [rodada]); // Dependência do useEffect agora inclui 'rodada'
 
   const chartData = {
     labels: dados.labels,
@@ -70,7 +95,7 @@ const RankingGraphs = ({ rodada }) => { // Agora aceitamos 'rodada' como prop
 
   return (
     <div>
-      <h2 className="text-center">Gráficos de Ranking</h2>
+      <h3 className="text-center">Ranking Charts</h3>
       <div style={{ height: 'auto', minHeight: '700px' }}> {/* Ajuste a altura mínima conforme necessário */}
         <Bar data={chartData} options={options} />
       </div>

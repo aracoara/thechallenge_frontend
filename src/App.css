@@ -36,3 +36,22 @@
     transform: rotate(360deg);
   }
 }
+
+
+/* Adiciona um espaçamento no topo do conteúdo principal para todas as páginas */
+  /* A altura do seu Navbar + algum espaço extra */
+/* .main-content {
+  padding-top: 70px; 
+} */
+
+/* Ajuste conforme a altura do seu Navbar */
+.main-content {
+  flex-grow: 1;
+  padding-top: 90px; 
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Use vh (viewport height) para garantir que ele preencha a tela */
+}

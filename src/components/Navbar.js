@@ -14,40 +14,50 @@ const AppNavbar = () => {
   };
 
   return (
-<Navbar bg="light" expand="lg">
-  <Container>
-    <Navbar.Brand as={NavLink} to="/">
-      <img src={logo} alt="Logo" height="50" />
-    </Navbar.Brand>
-    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-    <Navbar.Collapse id="basic-navbar-nav">
-      <Nav className="me-auto">
-        <Nav.Item>
-          <Nav.Link as={NavLink} to="/leaderboard" activeClassName="active">Leaderboard</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link as={NavLink} to="/picks-overview" activeClassName="active">Picks Overview</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link as={NavLink} to="/picks" activeClassName="active">Picks</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link as={NavLink} to="/user" activeClassName="active">Usuário</Nav.Link>
-        </Nav.Item>
-      </Nav>
-      <Nav className="ms-auto" style={{ flexWrap: 'wrap' }}> {/* Adiciona estilo para permitir a quebra de linha */}
-        {authData && (
-          <>
-            <div className="nav-link">{`Hi, ${authData.username}`}</div> {/* Saudação ao usuário logado */}
-            <button onClick={handleLogout} className="nav-link btn">Logout</button>
-          </>
-        )}
-      </Nav>
-    </Navbar.Collapse>
-  </Container>
-</Navbar>
-
+    // <Navbar bg="dark" variant="dark" expand="lg">
+      <Navbar bg="dark" variant="dark" expand="lg" style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1020 }}>
+      <Container>
+        <Navbar.Brand as={NavLink} to="/">
+          <img src={logo} alt="Logo" height="50" />
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Item>
+              <Nav.Link as={NavLink} to="/leaderboard" activeClassName="active">Leaderboard</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={NavLink} to="/picks-overview" activeClassName="active">Picks Overview</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={NavLink} to="/picks" activeClassName="active">Picks</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={NavLink} to="/tournament" activeClassName="active">Tournament</Nav.Link>
+            </Nav.Item>
+          </Nav>
+          <Nav className="ms-auto">
+            {authData && (
+              <>
+                <div className="nav-link">{`Hi, ${authData.username}`}</div> {/* Saudação ao usuário logado */}
+                {/* <button onClick={handleLogout} className="nav-link btn btn-outline-light">Logout</button> */}
+                <button 
+                  onClick={handleLogout} 
+                  className="nav-link" 
+                  variant="outline-light"
+                  onMouseOver={(e) => e.target.style.color = 'yellow'} // Muda a cor do texto para preto ao passar o mouse
+                  onMouseOut={(e) => e.target.style.color = ''} // Retorna à cor original ao retirar o mouse
+                >
+                  Logout
+                </button>
+              </>
+            )}
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
+  
 };
 
 export default AppNavbar;

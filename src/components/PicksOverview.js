@@ -2,46 +2,61 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Container, Row, Col, Table, Pagination } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './PicksOverview.css';
+import { useTournament } from './TournamentContext'; 
+import { useAuth } from './AuthContext'; 
+import axios from 'axios';
 
 
 const PicksOverview = () => {
+    const { authData } = useAuth();
     const [picks, setPicks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const rowsPerPage = 10;
-
     const [classifiedResults, setClassifiedResults] = useState({});
+    const { tournament } = useTournament();
 
 
 
     useEffect(() => {
         // Função para buscar os palpites dos participantes
         const fetchPicks = async () => {
-            try {
-                const response = await fetch('http://127.0.0.1:5000/api/PicksOverview');
-                const data = await response.json();
-                setPicks(data);
-            } catch (error) {
-                console.error('Erro ao buscar picks:', error);
+            if (tournament.short_name && tournament.year) {
+                try {
+                    const apiUrl = `http://127.0.0.1:5000/PicksOverview/${tournament.short_name}/${tournament.year}`;
+                    const response = await axios.get(apiUrl);
+                    setPicks(response.data);
+                } catch (error) {
+                    console.error('Erro ao buscar picks:', error);
+                }
+            } else {
+                console.log("Informações do torneio não disponíveis para buscar palpites.");
             }
         };
-
+    
         fetchPicks();
-
-            // Função para buscar os resultados classificados
+    
+        // Função para buscar os resultados classificados
         const fetchClassifiedResults = async () => {
-            try {
-                const response = await fetch('http://127.0.0.1:5000/api/classified-players');
-                const data = await response.json();
-                setClassifiedResults(data);
-            } catch (error) {
-                console.error('Erro ao buscar classified-players:', error);
+            if (tournament.short_name && tournament.year) {
+                try {
+                    const apiUrl = `http://127.0.0.1:5000/classified-players/${tournament.short_name}/${tournament.year}`;
+                    const response = await axios.get(apiUrl);
+                    setClassifiedResults(response.data);
+                    console.log('Classified Results:', response.data);
+                } catch (error) {
+                    console.error('Erro ao buscar classified-players:', error);
+                }
+            } else {
+                console.log("Informações do torneio não disponíveis para buscar os jogadores classificados.");
             }
         };
-
+    
         fetchClassifiedResults();
-
+    
     }, []);
+    
 
     const sortedPicks = useMemo(() => {
         let sortablePicks = [...picks];
@@ -87,12 +102,13 @@ const PicksOverview = () => {
         <Container >
             <Row>
                 <Col>
-                    <h1 className="text-center my-4">Picks Overview</h1>
-                <div className="table-responsive"> {/* Envolver a Table com div.table-responsive */}
-                    <Table striped bordered hover size="sm">
-                        <thead>
+                    <h1 className="text-center">{tournament.name} {tournament.year}</h1>
+                    <h2 className="text-center my-4">Picks Overview</h2>
+                <div className="table-responsive"> 
+                    <table className="table table-striped table-bordered table-hover table-sm">
+                        <thead className="table-header-custom">
                             <tr>
-                                <th onClick={() => requestSort('User')}>Participante{getSortDirectionIndicator('User')}</th>
+                                <th onClick={() => requestSort('User')}>Member{getSortDirectionIndicator('User')}</th>
                                 <th onClick={() => requestSort('QF1')}>QF1{getSortDirectionIndicator('QF1')}</th>
                                 <th onClick={() => requestSort('QF2')}>QF2{getSortDirectionIndicator('QF2')}</th>
                                 <th onClick={() => requestSort('QF3')}>QF3{getSortDirectionIndicator('QF3')}</th>
@@ -133,7 +149,7 @@ const PicksOverview = () => {
                             ))}
                         </tbody>
 
-                    </Table>
+                    </table>
                 </div>
                     <Pagination>{paginationItems}</Pagination>
                 </Col>

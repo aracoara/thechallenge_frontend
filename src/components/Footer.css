@@ -1,0 +1,66 @@
+body, html {
+    height: 100%;
+    margin: 0;
+  }
+  
+  #root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Use vh (viewport height) para garantir que ele preencha a tela */
+  }
+  
+  .footer {
+    background-color: #343a40; /* Cor de fundo semelhante ao Navbar */
+    color: #ffffff; /* Texto branco */
+    margin-top: auto;
+  }
+  
+  .footer .row {
+    display: flex; /* Define a row como um container flex */
+    flex-wrap: wrap; /* Permite que os itens da linha se ajustem conforme necessário */
+    align-items: flex-start; /* Alinha os itens ao topo */
+    margin-right: 0; /* Remove a margem padrão do lado direito */
+    margin-left: 0; /* Remove a margem padrão do lado esquerdo */
+  }
+  
+  .footer .col {
+    display: flex; /* Define as colunas como containers flex */
+    flex-direction: column; /* Organiza os itens da coluna verticalmente */
+    justify-content: flex-start; /* Alinha os itens ao topo da coluna */
+  }
+  
+  .footer .footer-link {
+    color: #ffffff; /* Links brancos */
+    background-color: transparent; /* Fundo transparente */
+    padding: 0; /* Remove o preenchimento padrão */
+    border: none; /* Remove bordas */
+  }
+  
+  .footer .footer-link:hover {
+    text-decoration: none; /* Remove a sublinhado ao passar o mouse */
+  }
+  
+  .footer .footer-copy {
+    padding: 1rem 0; /* Espaçamento superior e inferior para o texto de direitos autorais */
+    color: #ffffff; /* Texto branco para a cópia de direitos autorais */
+    margin-top: auto; /* Empurra a cópia dos direitos autorais para baixo */
+    width: 100%; /* Garante que a cópia dos direitos autorais ocupe a largura total */
+  }
+  
+  @media (max-width: 767px) {
+    .footer .row {
+      align-items: center; /* Centraliza os itens verticalmente em telas menores */
+    }
+  
+    .footer .col {
+      align-items: center; /* Centraliza o conteúdo da coluna em telas menores */
+    }
+  
+    .footer .footer-copy {
+      margin-top: 1rem; /* Espaço adicional acima da cópia de direitos autorais em telas menores */
+    }
+  }
+  
+  .main-content {
+    flex: 1; /* Isso vai fazer com que o main-content cresça e ocupe o espaço disponível */
+  }

@@ -29,7 +29,7 @@ const onLogin = async ({ email, password }) => {
               email, 
               isAuthenticated: true // Adiciona um flag para verificar se o usuário está autenticado
           });
-          navigate('/leaderboard');
+          navigate('/tournament');
         return response.status; // Retorna o status da resposta
       } else {
         // A requisição falhou

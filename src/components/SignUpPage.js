@@ -1,20 +1,23 @@
-// Este código deve ser adicionado em um componente que chama SignUpForm, como SignUpPage.js
-
 import React, { useState } from 'react';
 import SignUpForm from './SignUpForm'; // Certifique-se de que o caminho está correto
 import { useNavigate } from 'react-router-dom';
+// import { useAuth } from './AuthContext'; // Importe useAuth em vez de AuthContext
 
 function SignUpPage() {
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Adiciona o hook useNavigate para navegação
+  const navigate = useNavigate();
+  // const { csrfToken } = useAuth(); // Use o hook useAuth para acessar o csrfToken
 
   const onSignUp = async (userData) => {
     try {
+      // Inclua o csrfToken nas headers da solicitação
       const response = await fetch('http://localhost:5000/api/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          // 'X-CSRF-Token': csrfToken, // Adicione o token CSRF aqui
         },
+        // credentials: 'include', // Necessário para incluir cookies com a solicitação
         body: JSON.stringify(userData),
       });
 
@@ -22,7 +25,6 @@ function SignUpPage() {
       if (response.ok) {
         console.log('Usuário cadastrado com sucesso:', data);
         navigate('/login'); // Redireciona para a página de login
-        // Aqui você pode redirecionar para a página de login ou fazer outra ação
       } else {
         console.error('Falha no cadastro:', data.error);
         setError(data.error); // Exibe a mensagem de erro no seu componente

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
@@ -8,13 +7,13 @@ function LoginForm({ onLogin }) {
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate(); // Hook para navegação
 
-  // Função para mapear códigos de status HTTP para mensagens de erro
   const getErrorMessageByStatusCode = (status) => {
     switch (status) {
       case 400:
         return 'Invalid request. Please check your data.';
       case 401:
-        return 'Invalid credentials. Please try again.';
+        // Atualizado para incluir um convite para redefinição de senha diretamente na mensagem
+        return 'Invalid credentials. Please try again or click "Forgot password?" to reset your password.';
       case 403:
         return 'Access denied. You do not have permission to perform this action.';
       case 500:
@@ -24,30 +23,26 @@ function LoginForm({ onLogin }) {
     }
   };
 
-  // Esta função será chamada quando o formulário for submetido
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("handleSubmit chamado");
-  
     const status = await onLogin({ email, password });
-    console.log("Status da resposta de login:", status);
-  
+
     if (status === 200) {
-      // Limpa a mensagem de erro se o login for bem-sucedido
       setErrorMessage('');
     } else {
-      // Define a mensagem de erro com base no status da resposta
       const errorMsg = getErrorMessageByStatusCode(status);
-      console.log("Mensagem de erro definida para:", errorMsg);
-      setErrorMessage(errorMsg || 'An unknown error occurred. Please try again.');
+      setErrorMessage(errorMsg);
     }
   };
-  
-  // Função para redirecionar para a página de cadastro
-  const handleSignUpClick = () => {
-    navigate('/signup'); // Rota de cadastro definida no seu Router
+
+  // Função adicional para navegar para a página de recuperação de senha
+  const handlePasswordRecovery = () => {
+    navigate('/password-recovery');
   };
-  
+
+  const handleSignUpClick = () => {
+    navigate('/signup');
+  };
 
   return (
     <div className="container mt-5">
@@ -56,7 +51,15 @@ function LoginForm({ onLogin }) {
           <div className="card">
             <h5 className="card-header">Login</h5>
             <div className="card-body">
-              {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
+              {errorMessage && (
+                <div className="alert alert-danger" role="alert">
+                  {errorMessage}
+                  {errorMessage.includes('Forgot password?') && (
+                    // Adicionando um botão dentro da mensagem de erro para maior clareza e funcionalidade
+                    <button onClick={handlePasswordRecovery} className="btn btn-link p-0 m-0 align-baseline">Forgot password?</button>
+                  )}
+                </div>
+              )}
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label htmlFor="email" className="form-label">Email:</label>
@@ -81,7 +84,7 @@ function LoginForm({ onLogin }) {
                   />
                 </div>
                 <button type="submit" className="btn btn-primary">Login</button>
-                <button type="button" onClick={handleSignUpClick} className="btn btn-link">Sign Up</button> {/* Botão de cadastro */}
+                <button type="button" onClick={handleSignUpClick} className="btn btn-link">Sign Up</button>
               </form>
             </div>
           </div>
@@ -93,6 +96,28 @@ function LoginForm({ onLogin }) {
 
 export default LoginForm;
 
+
+
+  // // Esta função será chamada quando o formulário for submetido
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   console.log("handleSubmit chamado");
+  
+  //   const status = await onLogin({ email, password });
+  //   console.log("Status da resposta de login:", status);
+  
+  //   if (status === 200) {
+  //     // Limpa a mensagem de erro se o login for bem-sucedido
+  //     setErrorMessage('');
+  //   } else {
+  //     // Define a mensagem de erro com base no status da resposta
+  //     const errorMsg = getErrorMessageByStatusCode(status);
+  //     console.log("Mensagem de erro definida para:", errorMsg);
+  //     setErrorMessage(errorMsg || 'An unknown error occurred. Please try again.');
+  //   }
+  // };
+  
+  // Função para redirecionar para a página de cadastro
 
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
@@ -129,3 +154,44 @@ export default LoginForm;
   //     setErrorMessage('Network error. Please check your connection and try again.');
   //   }
   // };
+
+    // return (
+  //   <div className="container mt-5">
+  //     <div className="row justify-content-center">
+  //       <div className="col-md-6">
+  //         <div className="card">
+  //           <h5 className="card-header">Login</h5>
+  //           <div className="card-body">
+  //             {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
+  //             <form onSubmit={handleSubmit}>
+  //               <div className="mb-3">
+  //                 <label htmlFor="email" className="form-label">Email:</label>
+  //                 <input
+  //                   id="email"
+  //                   type="email"
+  //                   className="form-control"
+  //                   value={email}
+  //                   onChange={(e) => setEmail(e.target.value)}
+  //                   required
+  //                 />
+  //               </div>
+  //               <div className="mb-3">
+  //                 <label htmlFor="password" className="form-label">Password:</label>
+  //                 <input
+  //                   id="password"
+  //                   type="password"
+  //                   className="form-control"
+  //                   value={password}
+  //                   onChange={(e) => setPassword(e.target.value)}
+  //                   required
+  //                 />
+  //               </div>
+  //               <button type="submit" className="btn btn-primary">Login</button>
+  //               <button type="button" onClick={handleSignUpClick} className="btn btn-link">Sign Up</button> {/* Botão de cadastro */}
+  //             </form>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
