@@ -1,0 +1,45 @@
+/* UserPage.css */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .text-center {
+    text-align: center; /* Alinhamento central para títulos */
+  }
+  
+  h2 {
+    color: #495057; /* Cor escura para contraste */
+    margin-bottom: 20px; /* Espaçamento abaixo dos títulos */
+  }
+  
+  .alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+  
+  .alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+
+  .game-pair {
+    /* Adiciona uma borda preta ao redor do par de jogos */
+    border: 2px solid #000; 
+    /* Adiciona um espaço entre a borda e o conteúdo interno */
+    padding: 10px; 
+    /* Adiciona um espaço entre cada par de jogos */
+    margin-bottom: 30px; 
+    /* Adiciona um espaço entre a borda e o conteúdo interno */
+    /* border-radius: 10px;  */
+  }
+  

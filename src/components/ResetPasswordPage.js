@@ -24,7 +24,9 @@ function ResetPasswordPage() {
     console.log("Enviando solicitação de redefinição de senha para o servidor...");
 
     try {
-      const response = await fetch(`http://localhost:5000/api/reset_password/${token}`, {
+      // const response = await fetch(`https://solino.pythonanywhere.com/api/reset_password/${token}`, {
+      const response = await fetch(`http://127.0.0.1:5000/api/reset_password/${token}`, {
+
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password }),

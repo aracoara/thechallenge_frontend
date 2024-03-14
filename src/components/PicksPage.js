@@ -18,12 +18,18 @@ const Picks = () => {
     });
 
   const {  tournament } = useTournament();
+  const [isSubmitSuccessful, setIsSubmitSuccessful] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(''); // Para armazenar a mensagem de erro
+  const [showErrorMessage, setShowErrorMessage] = useState(false); // Para controlar a visibilidade da mensagem de erro
+
 
   // Pegar os jogadores do torneio
   useEffect(() => {
     // Verifica se temos informações válidas do torneio para fazer a chamada à API
     if (tournament.short_name && tournament.year) {
+      // axios.get(`https://solino.pythonanywhere.com/players/${tournament.short_name}/${tournament.year}`)
       axios.get(`http://127.0.0.1:5000/players/${tournament.short_name}/${tournament.year}`)
+
         .then(response => {
           // Assumindo que queremos formatar os dados dos jogadores de uma forma específica
           const formattedData = response.data.reduce((acc, player) => {
@@ -33,16 +39,16 @@ const Picks = () => {
           setPlayers(formattedData);
         })
         .catch(error => {
-          console.error(`Erro ao buscar jogadores para ${tournament.short_name} ${tournament.year}:`, error);
+          console.error(`Error fetching players for ${tournament.short_name} ${tournament.year}:`, error);
         });
     } else {
-      console.log("Informações do torneio não disponíveis para buscar jogadores.");
+      console.log("Tournament information not available to fetch players.");
     }
   }, [tournament]);
     
   const handleInputChangeQF = (event) => {
     const { name, value } = event.target;
-    console.log(`Seleção QF atualizada: ${name} = ${value}`); 
+    console.log(`QF Selection updated. ${name} = ${value}`); 
     setSelections(prev => ({ ...prev, [name]: value }));
   };
 
@@ -67,7 +73,7 @@ const Picks = () => {
     // Função para lidar com mudanças nas seleções de SF
   const handleInputChangeSF = (event) => {
       const { name, value } = event.target;
-      console.log(`Seleção SF atualizada: ${name} = ${value}`); 
+      console.log(`SF Selection updated. ${name} = ${value}`); 
       setSelections(prev => ({ ...prev, [name]: value }));
     };
 
@@ -110,7 +116,7 @@ const Picks = () => {
     
   const handleInputChangeF = (event) => {
     const { name, value } = event.target;
-    console.log(`Seleção Final atualizada: ${name} = ${value}`); 
+    console.log(`Final Selection updated. ${name} = ${value}`); 
     setSelections(prev => ({ ...prev, [name]: value }));
   };
 
@@ -143,7 +149,7 @@ const Picks = () => {
     
   const handleInputChangeChampion = (event) => {
     const { name, value } = event.target;
-    console.log(`Seleção do Campeão atualizada: ${name} = ${value}`); 
+    console.log(`Champion selection updated. ${name} = ${value}`); 
     setSelections(prev => ({ ...prev, [name]: value }));
   };
 
@@ -170,7 +176,7 @@ const Picks = () => {
   const generateOutputData = (selections, userData, tournamentData) => {
     // Certifique-se de que userData e tournamentData não são nulos
     if (!userData || !tournamentData) {
-      console.error('Dados do usuário ou do torneio estão faltando');
+      console.error('User or tournament data is missing.');
       return null;
     }
   
@@ -192,7 +198,7 @@ const Picks = () => {
   };
   
   const outputData = generateOutputData(selections, authData, tournament);
-  console.log("OutputEsperado:", outputData);
+  console.log("Expected Output:", outputData);
   
 
   const allSelectionsMade = (outputData) => {
@@ -208,7 +214,9 @@ const Picks = () => {
 
   const sendPicksToServer = async (outputData) => {
     try {
+      // const response = await fetch(`https://solino.pythonanywhere.com/submit_picks_tournaments/${tournament.short_name}/${tournament.year}`, {
       const response = await fetch(`http://localhost:5000/submit_picks_tournaments/${tournament.short_name}/${tournament.year}`, {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -225,40 +233,68 @@ const Picks = () => {
 
       if (response.ok) {
         const responseData = await response.json();
-        console.log("Picks enviados com sucesso:", responseData);
+        console.log("Picks submitted successfully.", responseData);
+        
+        // Atualiza o estado para indicar o sucesso do envio
+        setIsSubmitSuccessful(true);
+        
+        // Reset selections
+        setSelections({
+          QF1: '', QF2: '', QF3: '', QF4: '',
+          QF5: '', QF6: '', QF7: '', QF8: '',
+          SF1: '', SF2: '', SF3: '', SF4: '',
+          F1: '', F2: '',
+          Champion: ''
+        });
+  
+        // Opcionalmente, esconde a mensagem de sucesso após X segundos
+        setTimeout(() => {
+          setIsSubmitSuccessful(false);
+        }, 5000); // Ajuste o tempo conforme necessário
+  
       } else {
         const errorData = await response.json();
-        console.error("Erro ao enviar picks:", errorData);
+        console.error("Error sending picks:", errorData);
+        setIsSubmitSuccessful(false);
       }
-    } catch (error) {
-      console.error("Falha na requisição:", error);
-    }
-  };
+      } catch (error) {
+        console.error("Request failed:", error);
+        setIsSubmitSuccessful(false);
+      }
+    };
 
-  // const handleButtonClick = () => {
-  //   const outputData = generateOutputData(selections, authData, tournament);
-  //   if (outputData) {
-  //     sendPicksToServer(outputData);
-  //   }
-  // };
-  
-  useEffect(() => {
-    if (authData) { // Garante que authData não é null antes de proceder
-      const outputData = generateOutputData(selections, authData, tournament);
-      if (outputData && allSelectionsMade(outputData)) {
-        sendPicksToServer(outputData);
+    const handleSubmit = async (event) => {
+      event.preventDefault(); // Prevenir o comportamento padrão de submit de formulário
+      if (!authData) {
+        console.error('User not authenticated.');
+        setErrorMessage('You need to be authenticated to submit your picks.'); // Define a mensagem de erro
+        setShowErrorMessage(true); // Mostra a mensagem de erro
+        return;
       }
-    }
-  }, [selections, authData, tournament]);
+      const outputData = generateOutputData(selections, authData, tournament);
+      if (!outputData) {
+        setErrorMessage('Error generating data for submission. Please try again.'); // Define a mensagem de erro
+        setShowErrorMessage(true); // Mostra a mensagem de erro
+        return;
+      }
+      if (allSelectionsMade(outputData)) {
+        await sendPicksToServer(outputData);
+        setShowErrorMessage(false); // Esconde a mensagem de erro após o envio bem-sucedido
+      } else {
+        setErrorMessage('Please complete all selections before submitting.'); // Define a mensagem de erro para seleções incompletas
+        setShowErrorMessage(true); // Mostra a mensagem de erro
+      }
+    };
+    
   
   // Se não houver dados de autenticação, podemos escolher não renderizar o componente ou renderizar um estado alternativo.
   if (!authData) {
-    console.log("Usuário não autenticado.");
+    console.log("User not authenticated.");
     // Retorna null ou um componente de "não autenticado"
     return null; // Ou return <ComponenteNaoAutenticado />;
   }
 
-  console.log("ID do Participante: ", authData.user_id);  
+  console.log("Participant ID:", authData.user_id);  
 
   return (
     <Container fluid="lg" className="my-4">
@@ -274,7 +310,7 @@ const Picks = () => {
                     {renderSelectorOptionsQF('1')}
                   </Form.Control>
                 </div>
-                <div className="connector"></div> {/* Linha de conexão para SF */}
+                <div className="connector"></div> 
                 <div className="game">
                   <Form.Control as="select" name="QF2" value={selections.QF2} onChange={handleInputChangeQF}>
                     <option value="">Select Player</option>
@@ -366,9 +402,20 @@ const Picks = () => {
                   <div className="game-champion">
                   <Form.Control as="select" name="Champion" value={selections.Champion} onChange={handleInputChangeChampion}><option value="">Select Player</option>
                       {renderSelectorOptionsChampion()}</Form.Control></div>
-                  {/* <div className="submit-container text-center mt-3"><button onClick={handleButtonClick}>Submit Picks</button></div> */}
+                  <div className="submit-container text-center mt-3"><button type="submit" onClick={handleSubmit}>Submit Picks!</button></div>
+                  
                   {/* <div className="full-draw-container text-center mt-3"><a href="./AO24_v2.pdf" className="full-draw-link">FULL DRAW</a></div>
                    */}
+                  {isSubmitSuccessful && (
+                    <div className="alert alert-success" role="alert">
+                      Picks submitted successfully!
+                    </div>
+                  )}
+                  {showErrorMessage && (
+                    <div className="alert alert-danger" role="alert">
+                      {errorMessage}
+                    </div>
+                  )}
                   <div className="full-draw-container text-center mt-3">
                     {tournament.pdfPath && (
                       <a href={tournament.pdfPath} target="_blank" rel="noopener noreferrer" className="full-draw-link">FULL DRAW</a>
@@ -470,3 +517,19 @@ export default Picks;
   //     console.error("Falha na requisição:", error);
   //   }
   // };
+
+    // const handleButtonClick = () => {
+  //   const outputData = generateOutputData(selections, authData, tournament);
+  //   if (outputData) {
+  //     sendPicksToServer(outputData);
+  //   }
+  // };
+  
+  // useEffect(() => {
+  //   if (authData) { // Garante que authData não é null antes de proceder
+  //     const outputData = generateOutputData(selections, authData, tournament);
+  //     if (outputData && allSelectionsMade(outputData)) {
+  //       sendPicksToServer(outputData);
+  //     }
+  //   }
+  // }, [selections, authData, tournament]);

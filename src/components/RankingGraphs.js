@@ -13,7 +13,9 @@ const RankingGraphs = ({ rodada }) => { // Agora aceitamos 'rodada' como prop
     const fetchTournamentScores = async () => {
       if (tournament.short_name && tournament.year) {
         try {
+          // const apiUrl = `https://solino.pythonanywhere.com/pontuacoes/${tournament.short_name}/${tournament.year}/${rodada}`;
           const apiUrl = `http://127.0.0.1:5000/pontuacoes/${tournament.short_name}/${tournament.year}/${rodada}`;
+
           const response = await axios.get(apiUrl);
           // Utilizando setDados conforme especificado, mantendo a estrutura dos dados para o gráfico
           setDados({

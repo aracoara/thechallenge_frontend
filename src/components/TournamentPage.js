@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from './AuthContext';
 import { useTournament } from './TournamentContext';
 import { Alert, Button, Container, Row, Col } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap'; // Importação adicional
 
 const TournamentPage = () => {
     const { authData } = useAuth();
@@ -10,9 +11,12 @@ const TournamentPage = () => {
     const [tournaments, setTournaments] = useState([]);
     const [selectedTournament, setSelectedTournament] = useState(null);
 
+
     const fetchTournaments = async () => {
         try {
+            // const response = await axios.get('https://solino.pythonanywhere.com/tournaments');
             const response = await axios.get('http://localhost:5000/tournaments');
+
             setTournaments(response.data);
             console.log('Tournaments loaded:', response.data);
         } catch (error) {
@@ -43,16 +47,29 @@ const TournamentPage = () => {
       if (!selectedTournament) return null;
     
       let message;
-      let links = [];
+      let linksComponents = []; // Ajuste no nome da variável para refletir seu uso
+      // let links = [];
       switch (selectedTournament.status) {
         case "Open":
           message = "Picks submission is open.";
-          links.push({ text: "Make your predictions on the Picks Page", href: "/picks" });
+          linksComponents.push(
+            <LinkContainer to="/picks">
+              <Button variant="primary" className="m-2">Make your predictions on the Picks Page</Button>
+            </LinkContainer>
+          );
           break;
         case "On Progress":
           message = "The tournament is in progress.";
-          links.push({ text: "Compare your guess with the other members", href: "/picks-overview" });
-          links.push({ text: "Follow your performance on the Leaderboard Page", href: "/leaderboard" });
+          linksComponents.push(
+            <LinkContainer to="/picks-overview">
+              <Button variant="primary" className="m-2">Compare your guess with the other members</Button>
+            </LinkContainer>
+          );
+          linksComponents.push(
+            <LinkContainer to="/leaderboard">
+              <Button variant="primary" className="m-2">Follow your performance on the Leaderboard Page</Button>
+            </LinkContainer>
+          );
           break;
         case "Closed":
           message = "Tournament closed.";
@@ -61,17 +78,30 @@ const TournamentPage = () => {
           message = "Status unknown.";
           break;
       }
-    
+      // switch (selectedTournament.status) {
+      //   case "Open":
+      //     message = "Picks submission is open.";
+      //     links.push({ text: "Make your predictions on the Picks Page", href: "/picks" });
+      //     break;
+      //   case "On Progress":
+      //     message = "The tournament is in progress.";
+      //     links.push({ text: "Compare your guess with the other members", href: "/picks-overview" });
+      //     links.push({ text: "Follow your performance on the Leaderboard Page", href: "/leaderboard" });
+      //     break;
+      //   case "Closed":
+      //     message = "Tournament closed.";
+      //     break;
+      //   default:
+      //     message = "Status unknown.";
+      //     break;
+      // }
+
       return (
         <Container className="text-center mt-3">
           <Row>
             <Col>
               <Alert variant="info">{message}</Alert>
-              {links.map((link, index) => (
-                <Button key={index} variant="primary" href={link.href} className="m-2" target="_blank">
-                  {link.text}
-                </Button>
-              ))}
+              {linksComponents}
               {selectedTournament.status !== "Closed" && selectedTournament.whatsapp_paths && (
                 <>
                   <p>Hi, {authData.username}, enter the tournament's exclusive WhatsApp group!</p>
@@ -83,7 +113,29 @@ const TournamentPage = () => {
             </Col>
           </Row>
         </Container>
-      );
+      );      
+      // return (
+      //   <Container className="text-center mt-3">
+      //     <Row>
+      //       <Col>
+      //         <Alert variant="info">{message}</Alert>
+      //         {links.map((link, index) => (
+      //           <Button key={index} variant="primary" href={link.href} className="m-2" target="_blank">
+      //             {link.text}
+      //           </Button>
+      //         ))}
+      //         {selectedTournament.status !== "Closed" && selectedTournament.whatsapp_paths && (
+      //           <>
+      //             <p>Hi, {authData.username}, enter the tournament's exclusive WhatsApp group!</p>
+      //             <Button href={selectedTournament.whatsapp_paths} variant="success" target="_blank">
+      //               Access WhatsApp Group {selectedTournament.short_name} {selectedTournament.year}
+      //             </Button>
+      //           </>
+      //         )}
+      //       </Col>
+      //     </Row>
+      //   </Container>
+      // );
     };
 
     return (

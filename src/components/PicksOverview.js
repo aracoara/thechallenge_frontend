@@ -11,10 +11,10 @@ import axios from 'axios';
 const PicksOverview = () => {
     const { authData } = useAuth();
     const [picks, setPicks] = useState([]);
+    const [classifiedResults, setClassifiedResults] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const rowsPerPage = 10;
-    const [classifiedResults, setClassifiedResults] = useState({});
     const { tournament } = useTournament();
 
 
@@ -24,6 +24,7 @@ const PicksOverview = () => {
         const fetchPicks = async () => {
             if (tournament.short_name && tournament.year) {
                 try {
+                    // const apiUrl = `https://solino.pythonanywhere.com/PicksOverview/${tournament.short_name}/${tournament.year}`;
                     const apiUrl = `http://127.0.0.1:5000/PicksOverview/${tournament.short_name}/${tournament.year}`;
                     const response = await axios.get(apiUrl);
                     setPicks(response.data);
@@ -41,7 +42,9 @@ const PicksOverview = () => {
         const fetchClassifiedResults = async () => {
             if (tournament.short_name && tournament.year) {
                 try {
+                    // const apiUrl = `https://solino.pythonanywhere.com/classified-players/${tournament.short_name}/${tournament.year}`;
                     const apiUrl = `http://127.0.0.1:5000/classified-players/${tournament.short_name}/${tournament.year}`;
+
                     const response = await axios.get(apiUrl);
                     setClassifiedResults(response.data);
                     console.log('Classified Results:', response.data);
@@ -56,8 +59,17 @@ const PicksOverview = () => {
         fetchClassifiedResults();
     
     }, []);
-    
 
+    // Função auxiliar para determinar a classe com base no palpite e no resultado classificado
+    const determineClass = (pick, classifiedResult) => {
+        if (classifiedResult === null || classifiedResult === undefined) {
+            return ''; // Não aplica nenhuma classe se o resultado classificado não estiver definido
+        }
+        return pick === classifiedResult ? 'text-success' : 'text-danger';
+    };    
+
+    
+    // Função para ordenar os palpites
     const sortedPicks = useMemo(() => {
         let sortablePicks = [...picks];
         if (sortConfig.key !== null) {
@@ -74,11 +86,13 @@ const PicksOverview = () => {
         return sortablePicks;
     }, [picks, sortConfig]);
 
+    // Função para paginar os palpites
     const sortedAndPaginatedPicks = useMemo(() => {
         const startIndex = (currentPage - 1) * rowsPerPage;
         return sortedPicks.slice(startIndex, startIndex + rowsPerPage);
     }, [sortedPicks, currentPage, rowsPerPage]);
 
+    // Função para renderizar o indicador de direção da ordenação
     const requestSort = (key) => {
         let direction = 'ascending';
         if (sortConfig.key === key && sortConfig.direction === 'ascending') {
@@ -87,10 +101,12 @@ const PicksOverview = () => {
         setSortConfig({ key, direction });
     };
 
+    // Função para renderizar o indicador de direção da ordenação
     const getSortDirectionIndicator = (key) => {
         return sortConfig.key === key ? (sortConfig.direction === 'ascending' ? ' 🔽' : ' 🔼') : '';
     };
 
+    // Função para calcular o número de páginas
     const pageCount = Math.ceil(picks.length / rowsPerPage);
     const paginationItems = Array.from({ length: pageCount }, (_, i) => i + 1).map(page => (
         <Pagination.Item key={page} active={page === currentPage} onClick={() => setCurrentPage(page)}>
@@ -130,21 +146,21 @@ const PicksOverview = () => {
                             {sortedAndPaginatedPicks.map((pick) => (
                                 <tr key={pick.User}>
                                     <td>{pick.User}</td>
-                                    <td className={classifiedResults.QF1 === pick.QF1 ? 'text-success' : 'text-danger'}>{pick.QF1}</td>
-                                    <td className={classifiedResults.QF2 === pick.QF2 ? 'text-success' : 'text-danger'}>{pick.QF2}</td>
-                                    <td className={classifiedResults.QF3 === pick.QF3 ? 'text-success' : 'text-danger'}>{pick.QF3}</td>
-                                    <td className={classifiedResults.QF4 === pick.QF4 ? 'text-success' : 'text-danger'}>{pick.QF4}</td>
-                                    <td className={classifiedResults.QF5 === pick.QF5 ? 'text-success' : 'text-danger'}>{pick.QF5}</td>
-                                    <td className={classifiedResults.QF6 === pick.QF6 ? 'text-success' : 'text-danger'}>{pick.QF6}</td>
-                                    <td className={classifiedResults.QF7 === pick.QF7 ? 'text-success' : 'text-danger'}>{pick.QF7}</td>
-                                    <td className={classifiedResults.QF8 === pick.QF8 ? 'text-success' : 'text-danger'}>{pick.QF8}</td>
-                                    <td className={classifiedResults.SF1 === pick.SF1 ? 'text-success' : 'text-danger'}>{pick.SF1}</td>
-                                    <td className={classifiedResults.SF2 === pick.SF2 ? 'text-success' : 'text-danger'}>{pick.SF2}</td>
-                                    <td className={classifiedResults.SF3 === pick.SF3 ? 'text-success' : 'text-danger'}>{pick.SF3}</td>
-                                    <td className={classifiedResults.SF4 === pick.SF4 ? 'text-success' : 'text-danger'}>{pick.SF4}</td>
-                                    <td className={classifiedResults.F1 === pick.F1 ? 'text-success' : 'text-danger'}>{pick.F1}</td>
-                                    <td className={classifiedResults.F2 === pick.F2 ? 'text-success' : 'text-danger'}>{pick.F2}</td>
-                                    <td className={classifiedResults.Champion === pick.Champion ? 'text-success' : 'text-danger'}>{pick.Champion}</td>
+                                    <td className={determineClass(pick.QF1, classifiedResults?.QF1)}>{pick.QF1 ?? "Not selected"}</td>
+                                    <td className={determineClass(pick.QF2, classifiedResults?.QF2)}>{pick.QF2 ?? "Not selected"}</td>
+                                    <td className={determineClass(pick.QF3, classifiedResults?.QF3)}>{pick.QF3 ?? "Not selected"}</td>
+                                    <td className={determineClass(pick.QF4, classifiedResults?.QF4)}>{pick.QF4 ?? "Not selected"}</td>
+                                    <td className={determineClass(pick.QF5, classifiedResults?.QF5)}>{pick.QF5 ?? "Not selected"}</td>
+                                    <td className={determineClass(pick.QF6, classifiedResults?.QF6)}>{pick.QF6 ?? "Not selected"}</td>
+                                    <td className={determineClass(pick.QF7, classifiedResults?.QF7)}>{pick.QF7 ?? "Not selected"}</td>
+                                    <td className={determineClass(pick.QF8, classifiedResults?.QF8)}>{pick.QF8 ?? "Not selected"}</td>
+                                    <td className={determineClass(pick.SF1, classifiedResults?.SF1)}>{pick.SF1 ?? "Not selected"}</td>
+                                    <td className={determineClass(pick.SF2, classifiedResults?.SF2)}>{pick.SF2 ?? "Not selected"}</td>
+                                    <td className={determineClass(pick.SF3, classifiedResults?.SF3)}>{pick.SF3 ?? "Not selected"}</td>
+                                    <td className={determineClass(pick.SF4, classifiedResults?.SF4)}>{pick.SF4 ?? "Not selected"}</td>
+                                    <td className={determineClass(pick.F1, classifiedResults?.F1)}>{pick.F1 ?? "Not selected"}</td>
+                                    <td className={determineClass(pick.F2, classifiedResults?.F2)}>{pick.F2 ?? "Not selected"}</td>
+                                    <td className={determineClass(pick.Champion, classifiedResults?.Champion)}>{pick.Champion ?? "Not selected"}</td>
                                 </tr>
                             ))}
                         </tbody>

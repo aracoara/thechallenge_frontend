@@ -17,6 +17,7 @@ const RankingTable = ({ rodada }) => {
     const fetchTournamentScores = async () => {
       if (tournament.short_name && tournament.year) {
         try {
+          // const apiUrl = `https://solino.pythonanywhere.com/pontuacoes/${tournament.short_name}/${tournament.year}/${rodada}`;
           const apiUrl = `http://127.0.0.1:5000/pontuacoes/${tournament.short_name}/${tournament.year}/${rodada}`;
           const response = await axios.get(apiUrl);
           setData(response.data); // Atualiza o estado com os dados recebidos

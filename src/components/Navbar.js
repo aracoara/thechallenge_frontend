@@ -15,7 +15,7 @@ const AppNavbar = () => {
 
   return (
     // <Navbar bg="dark" variant="dark" expand="lg">
-      <Navbar bg="dark" variant="dark" expand="lg" style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1020 }}>
+      <Navbar bg="dark" variant="dark" expand="lg">
       <Container>
         <Navbar.Brand as={NavLink} to="/">
           <img src={logo} alt="Logo" height="50" />
@@ -34,6 +34,9 @@ const AppNavbar = () => {
             </Nav.Item>
             <Nav.Item>
               <Nav.Link as={NavLink} to="/tournament" activeClassName="active">Tournament</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={NavLink} to="/user" activeClassName="active">Dashboard</Nav.Link>
             </Nav.Item>
           </Nav>
           <Nav className="ms-auto">

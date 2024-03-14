@@ -40,9 +40,9 @@ const LeaderboardPage = () => {
           <Col lg={6}>
             <RankingTable rodada={selectedRound} />
           </Col>
-          <Col lg={6}>
+          {/* <Col lg={6}>
             <RankingGraphs rodada={selectedRound} />
-          </Col>
+          </Col> */}
         </Row>
       </Container>
     </>

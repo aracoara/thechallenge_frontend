@@ -100,4 +100,24 @@ body {
         cursor: pointer; /* Muda o cursor para indicar a ação clicável */
         }
                 
-          
+    @media (max-width: 768px) {
+        .tournament-column, .game-pair, .game-pair-SF, .game-pair-F, .game-champion {
+            padding: 8px;
+            margin: 10px 0;
+        }
+        
+        .game-pair-SF, .game-pair-F, .game-champion {
+            margin-top: 20px; /* Reduz o espaçamento para uma melhor visualização em dispositivos móveis */
+        }
+        
+        .full-draw-link, .submit-button {
+            font-size: 18px; /* Torna o texto menor para economizar espaço */
+            padding: 8px 16px; /* Ajusta o padding para manter os botões acessíveis mas não demasiadamente grandes */
+        }
+        
+        .full-draw-container, .submit-button {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        }
+                    

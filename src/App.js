@@ -13,6 +13,7 @@ import ResetPasswordPage from './components/ResetPasswordPage';
 import Footer from './components/Footnote'; 
 import { TournamentProvider, useTournament } from './components/TournamentContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import UserPage from './components/UserPage';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ const TournamentRoutes = () => {
       <Routes>
         <Route path="/" element={<Navigate replace to="/tournament" />} />
         <Route path="/tournament" element={<TournamentPage />} />
+        <Route path="/user" element={<UserPage />} />
         {tournament.status === "Open" && (
           <Route path="/picks" element={<PicksPage />} />
         )}
@@ -61,7 +63,17 @@ const TournamentRoutes = () => {
 
 export default App;
 
+// vercel --prod
+// comandos para subir alterações no git
+// git status
+// git add .
+// git commit -m "Descrever o que foi feito"
+// git branch
+// git checkout -b feature/html
+// git push --set-upstream origin novo_frontend
 
+// npm start
+// tree /f /a
 
 
 
@@ -108,13 +120,4 @@ export default App;
 // export default App;
 
 
-// comandos para subir alterações no git
-// git status
-// git add .
-// git commit -m "Descrever o que foi feito"
-// git branch
-// git checkout -b feature/html
-// git push --set-upstream origin novo_frontend
 
-// npm start
-// tree /f /a

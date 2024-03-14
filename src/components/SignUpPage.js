@@ -11,7 +11,9 @@ function SignUpPage() {
   const onSignUp = async (userData) => {
     try {
       // Inclua o csrfToken nas headers da solicitação
+      // const response = await fetch('https://solino.pythonanywhere.com/api/signup', {
       const response = await fetch('http://localhost:5000/api/signup', {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
