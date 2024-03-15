@@ -13,7 +13,7 @@ import ResetPasswordPage from './components/ResetPasswordPage';
 import Footer from './components/Footnote'; 
 import { TournamentProvider, useTournament } from './components/TournamentContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import UserPage from './components/UserPage';
+import DashboardPage from './components/DashboardPage';
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
         <Router>
           <div className="d-flex flex-column min-vh-100">
             <AppNavbar />
-            <div style={{ paddingTop: '90px' }}>
+            <div style={{ paddingTop: '10px' }}>
               <TournamentRoutes />
             </div>
             <Footer />
@@ -41,7 +41,7 @@ const TournamentRoutes = () => {
       <Routes>
         <Route path="/" element={<Navigate replace to="/tournament" />} />
         <Route path="/tournament" element={<TournamentPage />} />
-        <Route path="/user" element={<UserPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
         {tournament.status === "Open" && (
           <Route path="/picks" element={<PicksPage />} />
         )}

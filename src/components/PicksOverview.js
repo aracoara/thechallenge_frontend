@@ -24,8 +24,8 @@ const PicksOverview = () => {
         const fetchPicks = async () => {
             if (tournament.short_name && tournament.year) {
                 try {
-                    // const apiUrl = `https://solino.pythonanywhere.com/PicksOverview/${tournament.short_name}/${tournament.year}`;
-                    const apiUrl = `http://127.0.0.1:5000/PicksOverview/${tournament.short_name}/${tournament.year}`;
+                    const apiUrl = `https://thechallenge-solino.pythonanywhere.com/PicksOverview/${tournament.short_name}/${tournament.year}`;
+                    // const apiUrl = `http://127.0.0.1:5000/PicksOverview/${tournament.short_name}/${tournament.year}`;
                     const response = await axios.get(apiUrl);
                     setPicks(response.data);
                 } catch (error) {
@@ -42,8 +42,8 @@ const PicksOverview = () => {
         const fetchClassifiedResults = async () => {
             if (tournament.short_name && tournament.year) {
                 try {
-                    // const apiUrl = `https://solino.pythonanywhere.com/classified-players/${tournament.short_name}/${tournament.year}`;
-                    const apiUrl = `http://127.0.0.1:5000/classified-players/${tournament.short_name}/${tournament.year}`;
+                    const apiUrl = `https://thechallenge-solino.pythonanywhere.com/classified-players/${tournament.short_name}/${tournament.year}`;
+                    // const apiUrl = `http://127.0.0.1:5000/classified-players/${tournament.short_name}/${tournament.year}`;
 
                     const response = await axios.get(apiUrl);
                     setClassifiedResults(response.data);

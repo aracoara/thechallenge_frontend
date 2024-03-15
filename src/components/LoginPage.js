@@ -1,56 +1,73 @@
 import React, { useState } from 'react';
 import LoginForm from './LoginForm';
-import { useAuth } from './AuthContext'; // Ajuste o caminho conforme necessário
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+import { useAuth } from './AuthContext';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useTournament } from './TournamentContext';
+
 
 function LoginPage() {
     const { login } = useAuth();
-    const navigate = useNavigate(); // Usa o hook useNavigate para navegação
-    const [error] = useState(""); // Estado para armazenar mensagens de erro
+    const navigate = useNavigate();
+    const [error, setError] = useState("");
+    const { selectTournament } = useTournament();
 
-// Implementação da função onLogin
-const onLogin = async ({ email, password }) => {
-    // console.log("onLogin chamado com:", { email, password });
-    try {
-      // const response = await fetch('https://solino.pythonanywhere.com/api/login', {
-      const response = await fetch('http://localhost:5000/api/login', {
+    const onLogin = async ({ email, password }) => {
+        try {
+            const loginResponse = await axios.post('https://thechallenge-solino.pythonanywhere.com/api/login', { email, password });
+            // const loginResponse = await axios.post('http://localhost:5000/api/login', { email, password });
 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-  
-      // console.log("O Buscar terminou de carregar:", response.url); 
-  
-      const data = await response.json();
-      if (response.ok) {
-          // console.log("Login bem-sucedido:", data);
-          // Atualiza o estado global de autenticação com todos os dados recebidos
-          login({
-              ...data, 
-              email, 
-              isAuthenticated: true // Adiciona um flag para verificar se o usuário está autenticado
-          });
-          navigate('/tournament');
-        return response.status; // Retorna o status da resposta
-      } else {
-        // A requisição falhou
-        // console.log("Login falhou com status:", response.status, "e dados:", data);
-        return response.status; // Retorna o status da resposta para tratamento de erro
-      }
-    } catch (error) {
-      console.error("Erro na requisição de login:", error);
-      return undefined; // Retorna undefined para indicar um erro na requisição
-    }
-  };
-  
+            if (loginResponse.status === 200) {
+                login({
+                    ...loginResponse.data,
+                    email,
+                    isAuthenticated: true
+                });
+                await navigateTournament(); // Supondo que essa lógica esteja correta e necessária.
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
+                // Altera a mensagem de erro para incluir um link direto para a redefinição de senha
+                setError('Invalid credentials. Please try again or ');
+                // Opção para redefinir a senha é mostrada aqui
+                setTimeout(() => navigate('/password-recovery'), 3000); // Redireciona após 3 segundos
+            } else {
+                setError('An unexpected error occurred. Please try again.');
+            }
+            console.error("Login error:", error);
+        }
+    };
 
-  return (
-    <div className="login-page">
-      {error && <p className="error">{error}</p>} {/* Exibe mensagens de erro, se houver */}
-      <LoginForm onLogin={onLogin} /> {/* Passa a função onLogin para LoginForm */}
-    </div>
-  );
+    // Função separada para lidar com a lógica de redirecionamento do torneio
+    const navigateTournament = async () => {
+        try {
+            const { data: tournaments } = await axios.get('https://thechallenge-solino.pythonanywhere.com/tournaments');
+            // const { data: tournaments } = await axios.get('http://localhost:5000/tournaments');
+            const openTournament = tournaments.find(t => t.status === "Open");
+
+            if (openTournament) {
+                selectTournament(openTournament);
+                navigate('/picks');
+            } else {
+                navigate('/');
+            }
+        } catch (error) {
+            console.error('Error loading tournaments:', error);
+            setError('Failed to load tournaments. Please try again.');
+        }
+    };
+
+    return (
+        <div className="login-page">
+            {error && 
+                <div className="alert alert-danger" role="alert">
+                    {error} 
+                    <a href="/password-recovery" className="alert-link">Forgot password?</a>
+                </div>
+            }
+            <LoginForm onLogin={onLogin} />
+        </div>
+    );
 }
 
 export default LoginPage;

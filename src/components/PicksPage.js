@@ -27,8 +27,8 @@ const Picks = () => {
   useEffect(() => {
     // Verifica se temos informações válidas do torneio para fazer a chamada à API
     if (tournament.short_name && tournament.year) {
-      // axios.get(`https://solino.pythonanywhere.com/players/${tournament.short_name}/${tournament.year}`)
-      axios.get(`http://127.0.0.1:5000/players/${tournament.short_name}/${tournament.year}`)
+      axios.get(`https://thechallenge-solino.pythonanywhere.com/players/${tournament.short_name}/${tournament.year}`)
+      // axios.get(`http://127.0.0.1:5000/players/${tournament.short_name}/${tournament.year}`)
 
         .then(response => {
           // Assumindo que queremos formatar os dados dos jogadores de uma forma específica
@@ -214,8 +214,8 @@ const Picks = () => {
 
   const sendPicksToServer = async (outputData) => {
     try {
-      // const response = await fetch(`https://solino.pythonanywhere.com/submit_picks_tournaments/${tournament.short_name}/${tournament.year}`, {
-      const response = await fetch(`http://localhost:5000/submit_picks_tournaments/${tournament.short_name}/${tournament.year}`, {
+      const response = await fetch(`https://thechallenge-solino.pythonanywhere.com/submit_picks_tournaments/${tournament.short_name}/${tournament.year}`, {
+      // const response = await fetch(`http://localhost:5000/submit_picks_tournaments/${tournament.short_name}/${tournament.year}`, {
 
         method: 'POST',
         headers: {

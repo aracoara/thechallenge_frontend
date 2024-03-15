@@ -36,7 +36,7 @@ const AppNavbar = () => {
               <Nav.Link as={NavLink} to="/tournament" activeClassName="active">Tournament</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link as={NavLink} to="/user" activeClassName="active">Dashboard</Nav.Link>
+              <Nav.Link as={NavLink} to="/dashboard" activeClassName="active">Dashboard</Nav.Link>
             </Nav.Item>
           </Nav>
           <Nav className="ms-auto">

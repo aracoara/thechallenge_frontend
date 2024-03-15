@@ -5,23 +5,7 @@ function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const navigate = useNavigate(); // Hook para navegação
-
-  const getErrorMessageByStatusCode = (status) => {
-    switch (status) {
-      case 400:
-        return 'Invalid request. Please check your data.';
-      case 401:
-        // Atualizado para incluir um convite para redefinição de senha diretamente na mensagem
-        return 'Invalid credentials. Please try again or click "Forgot password?" to reset your password.';
-      case 403:
-        return 'Access denied. You do not have permission to perform this action.';
-      case 500:
-        return 'Server error. Please try again later.';
-      default:
-        return 'An unknown error occurred. Please try again.';
-    }
-  };
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,19 +13,34 @@ function LoginForm({ onLogin }) {
 
     if (status === 200) {
       setErrorMessage('');
+      // Adicione navegação para a dashboard ou página inicial aqui, se necessário
     } else {
-      const errorMsg = getErrorMessageByStatusCode(status);
-      setErrorMessage(errorMsg);
+      // Verifique se a mensagem de erro precisa ser tratada aqui com base no status
+      if (status === 401) {
+        // Opção para navegar para a página de redefinição de senha
+        navigate('/password-recovery');
+      } else {
+        const errorMsg = getErrorMessageByStatusCode(status);
+        setErrorMessage(errorMsg);
+      }
     }
   };
 
-  // Função adicional para navegar para a página de recuperação de senha
-  const handlePasswordRecovery = () => {
-    navigate('/password-recovery');
-  };
-
-  const handleSignUpClick = () => {
-    navigate('/signup');
+  // Essa função deve ser ajustada para manipular os status de erro corretamente
+  const getErrorMessageByStatusCode = (status) => {
+    switch (status) {
+      case 400:
+        return 'Invalid request. Please check your data.';
+      case 401:
+        // Mensagem de erro atualizada para incluir um convite para redefinição de senha
+        return 'Invalid credentials. Please try again.';
+      case 403:
+        return 'Access denied. You do not have permission to perform this action.';
+      case 500:
+        return 'Server error. Please try again later.';
+      default:
+        return 'An unknown error occurred. Please try again.';
+    }
   };
 
   return (
@@ -52,13 +51,7 @@ function LoginForm({ onLogin }) {
             <h5 className="card-header">Login</h5>
             <div className="card-body">
               {errorMessage && (
-                <div className="alert alert-danger" role="alert">
-                  {errorMessage}
-                  {errorMessage.includes('Forgot password?') && (
-                    // Adicionando um botão dentro da mensagem de erro para maior clareza e funcionalidade
-                    <button onClick={handlePasswordRecovery} className="btn btn-link p-0 m-0 align-baseline">Forgot password?</button>
-                  )}
-                </div>
+                <div className="alert alert-danger" role="alert">{errorMessage}</div>
               )}
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
@@ -84,7 +77,6 @@ function LoginForm({ onLogin }) {
                   />
                 </div>
                 <button type="submit" className="btn btn-primary">Login</button>
-                <button type="button" onClick={handleSignUpClick} className="btn btn-link">Sign Up</button>
               </form>
             </div>
           </div>
@@ -95,6 +87,106 @@ function LoginForm({ onLogin }) {
 }
 
 export default LoginForm;
+
+
+
+// import React, { useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
+
+// function LoginForm({ onLogin }) {
+//   const [email, setEmail] = useState('');
+//   const [password, setPassword] = useState('');
+//   const [errorMessage, setErrorMessage] = useState('');
+//   const navigate = useNavigate(); // Hook para navegação
+
+//   const getErrorMessageByStatusCode = (status) => {
+//     switch (status) {
+//       case 400:
+//         return 'Invalid request. Please check your data.';
+//       case 401:
+//         // Atualizado para incluir um convite para redefinição de senha diretamente na mensagem
+//         return 'Invalid credentials. Please try again or click "Forgot password?" to reset your password.';
+//       case 403:
+//         return 'Access denied. You do not have permission to perform this action.';
+//       case 500:
+//         return 'Server error. Please try again later.';
+//       default:
+//         return 'An unknown error occurred. Please try again.';
+//     }
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     const status = await onLogin({ email, password });
+
+//     if (status === 200) {
+//       setErrorMessage('');
+//     } else {
+//       const errorMsg = getErrorMessageByStatusCode(status);
+//       setErrorMessage(errorMsg);
+//     }
+//   };
+
+//   // Função adicional para navegar para a página de recuperação de senha
+//   const handlePasswordRecovery = () => {
+//     navigate('/password-recovery');
+//   };
+
+//   const handleSignUpClick = () => {
+//     navigate('/signup');
+//   };
+
+//   return (
+//     <div className="container mt-5">
+//       <div className="row justify-content-center">
+//         <div className="col-md-6">
+//           <div className="card">
+//             <h5 className="card-header">Login</h5>
+//             <div className="card-body">
+//               {errorMessage && (
+//                 <div className="alert alert-danger" role="alert">
+//                   {errorMessage}
+//                   {errorMessage.includes('Forgot password?') && (
+//                     // Adicionando um botão dentro da mensagem de erro para maior clareza e funcionalidade
+//                     <button onClick={handlePasswordRecovery} className="btn btn-link p-0 m-0 align-baseline">Forgot password?</button>
+//                   )}
+//                 </div>
+//               )}
+//               <form onSubmit={handleSubmit}>
+//                 <div className="mb-3">
+//                   <label htmlFor="email" className="form-label">Email:</label>
+//                   <input
+//                     id="email"
+//                     type="email"
+//                     className="form-control"
+//                     value={email}
+//                     onChange={(e) => setEmail(e.target.value)}
+//                     required
+//                   />
+//                 </div>
+//                 <div className="mb-3">
+//                   <label htmlFor="password" className="form-label">Password:</label>
+//                   <input
+//                     id="password"
+//                     type="password"
+//                     className="form-control"
+//                     value={password}
+//                     onChange={(e) => setPassword(e.target.value)}
+//                     required
+//                   />
+//                 </div>
+//                 <button type="submit" className="btn btn-primary">Login</button>
+//                 <button type="button" onClick={handleSignUpClick} className="btn btn-link">Sign Up</button>
+//               </form>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default LoginForm;
 
 
 

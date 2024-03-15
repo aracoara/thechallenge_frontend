@@ -3,7 +3,7 @@ import { useTournament } from './TournamentContext';
 import { useAuth } from './AuthContext';
 import { Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
-import './UserPage.css';
+import './DashboardPage.css';
 
 const UserPage = () => {
   const { authData } = useAuth();
@@ -25,8 +25,8 @@ const UserPage = () => {
     const fetchUserPicks = async () => {
       setIsLoading(true);
       try {
-        // const response = await axios.get(`https://solino.pythonanywhere.com/PicksOverview/${tournament.short_name}/${tournament.year}`);
-        const response = await axios.get(`http://127.0.0.1:5000/PicksOverview/${tournament.short_name}/${tournament.year}`);
+        const response = await axios.get(`https://thechallenge-solino.pythonanywhere.com/PicksOverview/${tournament.short_name}/${tournament.year}`);
+        // const response = await axios.get(`http://127.0.0.1:5000/PicksOverview/${tournament.short_name}/${tournament.year}`);
         const userPick = response.data.find(pick => pick.User === authData.username);
 
         setUserPicks(userPick || null); // Usando || null para garantir um valor nulo explícito caso não encontre o palpite
@@ -44,8 +44,8 @@ const UserPage = () => {
 
     const fetchClassifiedPlayers = async () => {
       try {
-        // const response = await axios.get(`https://solino.pythonanywhere.com/classified-players/${tournament.short_name}/${tournament.year}`);
-        const response = await axios.get(`http://127.0.0.1:5000/classified-players/${tournament.short_name}/${tournament.year}`);
+        const response = await axios.get(`https://thechallenge-solino.pythonanywhere.com/classified-players/${tournament.short_name}/${tournament.year}`);
+        // const response = await axios.get(`http://127.0.0.1:5000/classified-players/${tournament.short_name}/${tournament.year}`);
         setUserClassifiedPicks(response.data || null); // Preparado para lidar com valores nulos ou indefinidos
       } catch (error) {
         console.error('Erro ao buscar jogadores classificados:', error);
